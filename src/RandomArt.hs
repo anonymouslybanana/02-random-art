@@ -99,7 +99,8 @@ exprToString (Thresh e1 e2 e3 e4) = error "TBD:Thresh"
 -- 0.8090169943749475
 
 eval :: Double -> Double -> Expr -> Double
-eval x y e = error "TBD:eval"
+eval x _ VarX = x
+eval _ y VarY = y
 
 evalFn :: Double -> Double -> Expr -> Double
 evalFn x y e = assert (-1.0 <= rv && rv <= 1.0) rv
@@ -139,6 +140,8 @@ build 0
   where
     r         = rand 10
 build d       = error "TBD:build"
+--ensure build d terminates, ie infinite recursive call
+-- d needs to be decremented all the way to 0, use build 0 in some way
 
 --------------------------------------------------------------------------------
 -- | Best Image "Seeds" --------------------------------------------------------

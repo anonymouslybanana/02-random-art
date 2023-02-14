@@ -32,7 +32,9 @@ import Prelude hiding (lookup)
 -- 0
 
 assoc :: Int -> String -> [(String, Int)] -> Int
-assoc def key kvs = error "TBD:assoc"
+assoc def search_key [] = def
+assoc def search_key ((key, val):xs) | search_key == key = val
+                                     | otherwise = assoc def search_key xs   
 
 --------------------------------------------------------------------------------
 {- | `removeDuplicates ls`
@@ -58,8 +60,10 @@ removeDuplicates ls = reverse (helper [] ls)
     helper seen []     = seen
     helper seen (x:xs) = helper seen' rest'
       where
-        seen'          = error "TBD:helper:seen"
-        rest'          = error "TBD:helper:rest"
+        seen' | x `elem` seen = seen
+              | otherwise = x : seen 
+        rest' = xs
+--folding pattern: use elem funtion
 
 --------------------------------------------------------------------------------
 {- | `wwhile f x` such that `wwhile f x` returns a value `x'` obtained from the repeated application of the input function `f`.
@@ -99,7 +103,11 @@ Thus, the final value will be `(false, <first value for which condition is no lo
 -- 512
 
 wwhile :: (a -> (Bool, a)) -> a -> a
-wwhile f x = error "TBD:wwhile"
+wwhile f x = case a of True -> x
+                       False -> a
+
+-- hint: consider using 'case of' syntax
+-- do while loop, always executes first time checks the condition after the first iteration
 
 --------------------------------------------------------------------------------
 {- | The **fixpoint** of a function `f` starting at `x`
@@ -143,6 +151,8 @@ The fixpoint of a function `f` is a point at which `f(x) = x`.
 fixpointL :: (Int -> Int) -> Int -> [Int]
 fixpointL f x = error "TBD:fixpointL"
 
+-- if f x == x, exit 
+
 -- You should see the following behavior at the prompt:
 
 -- >>> fixpointL collatz 1
@@ -178,6 +188,8 @@ fixpointW :: (Int -> Int) -> Int -> Int
 fixpointW f x = wwhile wwf x
  where
    wwf        = error "TBD:fixpoint:wwf"
+
+-- write a functiont that returns bool, int
 
 -- >>> fixpointW collatz 1
 -- 1
