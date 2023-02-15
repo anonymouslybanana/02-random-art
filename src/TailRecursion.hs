@@ -103,8 +103,8 @@ Thus, the final value will be `(false, <first value for which condition is no lo
 -- 512
 
 wwhile :: (a -> (Bool, a)) -> a -> a
-wwhile f x = case a of True -> x
-                       False -> a
+wwhile f x = let (a, b) = f x in 
+             if a then wwhile f b else b
 
 -- hint: consider using 'case of' syntax
 -- do while loop, always executes first time checks the condition after the first iteration
@@ -149,11 +149,12 @@ The fixpoint of a function `f` is a point at which `f(x) = x`.
   -}
 
 fixpointL :: (Int -> Int) -> Int -> [Int]
-fixpointL f x = error "TBD:fixpointL"
-
--- if f x == x, exit 
+fixpointL f x = let a = f x
+                    xs = []
+                in if x == a then x:xs else fixpointL f a
 
 -- You should see the following behavior at the prompt:
+-- make an xs and append it
 
 -- >>> fixpointL collatz 1
 -- [1]
@@ -189,6 +190,7 @@ fixpointW f x = wwhile wwf x
  where
    wwf        = error "TBD:fixpoint:wwf"
 
+--returns the last element of the list
 -- write a functiont that returns bool, int
 
 -- >>> fixpointW collatz 1

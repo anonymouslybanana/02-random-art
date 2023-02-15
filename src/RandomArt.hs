@@ -13,6 +13,7 @@ import           Control.Monad.ST
 import           Codec.Picture.Png
 import           Codec.Picture.Types
 import qualified Data.Vector.Storable as V
+import Data.Functor.Classes (eq2)
 
 --------------------------------------------------------------------------------
 -- | A Data Type for Grayscale Expressions -------------------------------------
@@ -78,12 +79,12 @@ sampleExpr3 =
 
 exprToString :: Expr -> String
 exprToString VarX                 = "x"
-exprToString VarY                 = error "TBD:VarY"
-exprToString (Sine e)             = error "TBD:Sin"
-exprToString (Cosine e)           = error "TBD:Cos"
-exprToString (Average e1 e2)      = error "TBD:Avg"
-exprToString (Times e1 e2)        = error "TBD:Times"
-exprToString (Thresh e1 e2 e3 e4) = error "TBD:Thresh"
+exprToString VarY                 = "y"
+exprToString (Sine e)             = "sin(pi*" ++ exprToString e ++ ")"
+exprToString (Cosine e)           = "cos(pi*" ++ exprToString e ++ ")"
+exprToString (Average e1 e2)      = "((" ++ exprToString e1 ++ "+" ++ exprToString e2 ++ ")/2)"
+exprToString (Times e1 e2)        = exprToString e1 ++ "*" ++ exprToString e2
+exprToString (Thresh e1 e2 e3 e4) = "(" ++ exprToString e1 ++ "<" ++ exprToString e2 ++ "?" ++ exprToString e3 ++ ":" ++ exprToString e4 ++ ")"
 
 --------------------------------------------------------------------------------
 -- | Evaluating Expressions at a given X, Y co-ordinate ------------------------
@@ -101,6 +102,11 @@ exprToString (Thresh e1 e2 e3 e4) = error "TBD:Thresh"
 eval :: Double -> Double -> Expr -> Double
 eval x _ VarX = x
 eval _ y VarY = y
+eval x y (Sine e) = sin(pi * eval x y e)
+eval x y (Cosine e) = cos(pi * eval x y e)
+eval x y (Average e1 e2) = (eval x y e1 + eval x y e2)/2
+eval x y (Times e1 e2)  = eval x y e1 * eval x y e2
+eval x y (Thresh e1 e2 e3 e4) = if eval x y e1 < eval x y e2 then eval x y e3 else eval x y e4 
 
 evalFn :: Double -> Double -> Expr -> Double
 evalFn x y e = assert (-1.0 <= rv && rv <= 1.0) rv
@@ -139,7 +145,11 @@ build 0
   | otherwise = VarY
   where
     r         = rand 10
-build d       = error "TBD:build"
+build d       = Sine (build (d - 1))
+
+--can add stuff to base case? whatever you want ig?
+--needs to be of depth 3
+
 --ensure build d terminates, ie infinite recursive call
 -- d needs to be decremented all the way to 0, use build 0 in some way
 
