@@ -150,8 +150,7 @@ The fixpoint of a function `f` is a point at which `f(x) = x`.
 
 fixpointL :: (Int -> Int) -> Int -> [Int]
 fixpointL f x = let a = f x
-                    xs = []
-                in if x == a then x:xs else fixpointL f a
+                in if x == a then [x] else x:fixpointL f a
 
 -- You should see the following behavior at the prompt:
 -- make an xs and append it
